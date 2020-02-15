@@ -12,5 +12,18 @@ https://github.com/steeply/gbot-trader
 ```sudo cp /scripts/gbot-helper/trader /usr/local/bin```  
 ```sudo chmod +x /usr/local/bin/trader```  
   
-Please edit 'user' and 'group' matching your system inside server.txt  
-If you don't want to create a 'scripts' folder, please edit server.txt
+You will be able to start 'trader' from anywhere in terminal now.
+  
+trader script will look for config files inside /scripts/  
+You need to copy config files from gbot-helper folder into /scripts/ folder.  
+
+```cp /scripts/gbot-helper/gbot.txt /scripts/```  
+  
+Please edit 'user' and 'group' matching your system inside gbot.txt  
+  
+If you don't want to create a 'scripts' folder, please edit gbot.txt  
+
+
+
+  
+---What
