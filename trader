@@ -8,7 +8,7 @@
 
 # By Rainman
 # V20201502
-# 1.0.4.7
+# 1.2.0.3
 
 # codes >
 
@@ -91,7 +91,7 @@ clear
 printf '%b' "      $trial_pair $trial \e[0;35mhttps://github.com/steeply/gbot-trader\033[0m
  <------------------------------------------------------------------------------------------->\033[0m
       \e[0;32mGBot (Trading Bot) - Command Center\e[31m
-      \e[0;33m[ GBot, admin helper tool v1.0.4.7 ]\033[0m
+      \e[0;33m[ GBot, admin helper tool v1.2.0.3 ]\033[0m
 
       $cm_uptime
 
@@ -105,7 +105,7 @@ printf '%b' "      $trial_pair $trial \e[0;35mhttps://github.com/steeply/gbot-tr
       s : \e[0;35mStop\033[0m     - stop trader          Buy\e[0;32m....:\033[0m $buy \e[90m$buy_old\033[0m
       i : \e[0;35mInstall\033[0m  - config & key         Sell\e[0;32m...:\033[0m $sell \e[90m$sell_old\033[0m
       l : \e[0;35mLogs\033[0m     - analyze logs         Orders\e[0;32m.:\033[0m $orders \e[90m$orders_old\033[0m
-      u : \e[0;35mUpdate\033[0m   - update scripts
+      u : \e[0;35mUpdate\033[0m   - update/upgrade
       x : \e[0;35mStats\033[0m    - stats                $last_buy_price
       q : \e[0;35mExit\033[0m     - exit                 $last_sell_price
 
@@ -293,7 +293,7 @@ printf '%b' "[\e[0;32mok\033[0m] "
 
 # install "one sell" strategy done
 
-# edit config.sh >
+# create/edit config.sh >
 
 "2")
 
@@ -366,31 +366,187 @@ TMZ="Europe/Moscow"
 else
 printf '%b' "[\e[0;32mok\033[0m] $TMZ"
 fi
+# edit more ? >
+ echo
+ read -r -p "Edit more? (y/n) " -n 1 -r
+ echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+ echo "LOG (1)"
+ read -r LOG;
+if [[ -z "$LOG" ]]; then
+printf '%b' "default '\e[0;32m1\033[0m'"
+LOG="1"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $LOG"
+fi
+ echo
+ echo "LOG DEBUG (1)"
+ read -r LDB;
+if [[ -z "$LDB" ]]; then
+printf '%b' "default '\e[0;32m1\033[0m'"
+LDB="1"
+ echo
+else
+printf "[\e[0;32mok\033[0m] $LDB%"
+fi
+ echo
+ echo "LOG TRANSPORTS (2)"
+ read -r LTP;
+if [[ -z "$LTP" ]]; then
+printf "default '\e[0;32m2\033[0m'"
+LTP="2"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $LTP"
+fi
+ echo
+ echo "COUNT ORDERS (20)"
+ read -r COR;
+if [[ -z "$COR" ]]; then
+printf "default '\e[0;32m20\033[0m'"
+COR="20"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $COR"
+fi
+ echo
+ echo "OFFSET FIRST ORDERS PERCENT (0.01)"
+ read -r OFO;
+if [[ -z "$OFO" ]]; then
+printf "default '\e[0;32m0.01\033[0m'"
+OFO="0.01"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $OFO"
+fi
+ echo
+ echo "ONE ORDERS OFFSET (0.4)"
+read -r OOO;
+if [[ -z "$OOO" ]]; then
+printf "default '\e[0;32m0.4\033[0m'"
+OOO="0.4"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $OOO"
+fi
+ echo
+ echo "ONE ORDERS PROFIT PERCENT (0.3)"
+ read -r OOP;
+if [[ -z "$OOP" ]]; then
+printf "default '\e[0;32m0.3\033[0m'"
+OOP="0.3"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $OOP"
+fi
+ echo
+ echo "ONE ORDERS SELL (true)"
+ read -r OOS;
+if [[ -z "$OOS" ]]; then
+printf "default '\e[0;32mtrue\033[0m'"
+OOS="true"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $OOS"
+fi
+ echo
+ echo "QUANTITY ORDERS IN BLOCKS (5)"
+ read -r QOI;
+if [[ -z "$QOI" ]]; then
+printf "default '\e[0;32m5\033[0m'"
+QOI="5"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $QOI"
+fi
+ echo
+ echo "RANGE OFFSET (15)"
+ read -r ROS;
+if [[ -z "$ROS" ]]; then
+printf "default '\e[0;32m15\033[0m'"
+ROS="15"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $ROS"
+fi
+ echo
+ echo "SIZE ORDERS MARTINGALE (20)"
+ read -r SOM;
+if [[ -z "$SOM" ]]; then
+printf "default '\e[0;32m20\033[0m'"
+SOM="20"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $SOM"
+fi
+ echo
+ echo "TYPE DATA USED (history)"
+ read -r TDU;
+if [[ -z "$TDU" ]]; then
+printf "default '\e[0;32mhistory\033[0m'"
+TDU="history"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $TDU"
+fi
+ echo
+ echo "DELAY REQUEST API (2000)"
+ read -r DRA;
+if [[ -z "$DRA" ]]; then
+printf "default '\e[0;32m2000\033[0m'"
+DRA="2000"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $DRA"
+fi
+ echo
+ echo "NODE ENV (production)"
+ read -r NEV;
+if [[ -z "$NEV" ]]; then
+printf "default '\e[0;32mproduction\033[0m'"
+NEV="production"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $NEV"
+fi
+ echo
+ echo "DELAY BETWEEN MODULES (2)"
+ read -r DBM;
+if [[ -z "$DBM" ]]; then
+printf "default '\e[0;32m2\033[0m'"
+DBM="2"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $DBM"
+fi
+fi
 # create newly edited config.sh >
  echo
  echo "#!/bin/sh
 export LANGUAGE=$LNG
-export LOG=1
-export LOG_DEBUG=1
-export LOG_TRANSPORTS=2
+export LOG=$LOG
+export LOG_DEBUG=$LDB
+export LOG_TRANSPORTS=$LTP
 # ==================================================
 export DEPOSIT_LIMIT=$DLT%
 export EXCHANGE=$EXC
 export NAME_COIN=$CO0
 export NAME_COIN_TWO=$CO1
-export COUNT_ORDERS=20
-export OFFSET_FIRST_ORDERS_PERCENT=0.01
-export ONE_ORDERS_OFFSET=0.4
-export ONE_ORDERS_PROFIT_PERCENT=0.3
-export ONE_ORDERS_SELL=true
-export QUANTITY_ORDERS_IN_BLOCKS=5
-export RANGE_OFFSET=15
-export SIZE_ORDERS_MARTINGALE=20
+export COUNT_ORDERS=$COR
+export OFFSET_FIRST_ORDERS_PERCENT=$OFO
+export ONE_ORDERS_OFFSET=$OOO
+export ONE_ORDERS_PROFIT_PERCENT=$OOP
+export ONE_ORDERS_SELL=$OOS
+export QUANTITY_ORDERS_IN_BLOCKS=$QOI
+export RANGE_OFFSET=$ROS
+export SIZE_ORDERS_MARTINGALE=$SOM
 #  ==================================================
-export TYPE_DATA_USED=history
-export DELAY_REQUEST_API=2000
-export NODE_ENV=production
-export DELAY_BETWEEN_MODULES=2
+export TYPE_DATA_USED=$TDU
+export DELAY_REQUEST_API=$DRA
+export NODE_ENV=$NEV
+export DELAY_BETWEEN_MODULES=$DBM
 export TIME_ZONE=$TMZ
 . ./gbot-1.key
 node ./build/server --no-color" > "$folder_bot"/config.sh.tmp
@@ -411,9 +567,9 @@ printf '%b' "[\e[0;32mok\033[0m] "
 
  ;;
 
-# edit config.sh done
+# create/edit config.sh done
 
-# edit gbot-1.key file >
+# create/edit gbot-1.key file >
 
 "3")
 
@@ -507,7 +663,7 @@ printf '%b' "[\e[0;32mok\033[0m] "
 
  ;;
 
-# edit gbot-1.key file done
+# create/edit gbot-1.key file done
 
 # example config/key >
 
