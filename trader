@@ -8,7 +8,7 @@
 
 # By Rainman
 # V20201502
-# 0.8.4.6
+# 0.8.4.0
 
 # codes >
 
@@ -19,21 +19,9 @@ clear
 # get date
 NOW="$(date +"%m.%d.%Y")"
 
-# config >
-
-# user group >
-user=pi
-group=pi
-
-# folders >
-folder_bot=/scripts/gbot-trader
-folder_helper=/scripts/gbot-helper
-folder_logs=/scripts/gbot-trader/logs
-# install folder >
-folder_install=/scripts/
-
-# log files >
-logs="$folder_bot"/logs/*.log
+# config directory >
+# shellcheck disable=SC1091
+source /scripts/server.txt # please edit if wrong.
 
 # dialog, ncurses no utf8 acs >
 export NCURSES_NO_UTF8_ACS=1
@@ -667,6 +655,12 @@ FILE="$folder_bot/readme.md"
 if [ ! -f "$FILE" ];
 then
 # fresh install ? >
+packagelist=(npm
+nodejs)
+sudo apt update &> /dev/null
+if ! [ -x "$(command -v "${packagelist[@]}")" ]; then
+sudo apt-get install "${packagelist[@]}" -y &> /dev/null
+fi
 sudo mkdir "$folder_install" &> /dev/null
 sudo chown -R "${user:?}":"${group:?}" "$folder_install"
 cd "$folder_install" || exit
