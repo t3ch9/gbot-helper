@@ -651,7 +651,7 @@ case $CHOICE in
 "1")
 
 # check if 'gbot-trader' exist >
-FILE="$folder_bot/readme.md"
+FILE="$folder_bot/config.sh"
 if [ ! -f "$FILE" ];
 then
 # fresh install ? >
