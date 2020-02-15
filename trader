@@ -8,7 +8,7 @@
 
 # By Rainman
 # V20201502
-# 1.2.0.3
+# 1.2.0.4
 
 # codes >
 
@@ -91,7 +91,7 @@ clear
 printf '%b' "      $trial_pair $trial \e[0;35mhttps://github.com/steeply/gbot-trader\033[0m
  <------------------------------------------------------------------------------------------->\033[0m
       \e[0;32mGBot (Trading Bot) - Command Center\e[31m
-      \e[0;33m[ GBot, admin helper tool v1.2.0.3 ]\033[0m
+      \e[0;33m[ GBot, admin helper tool v1.2.0.4 ]\033[0m
 
       $cm_uptime
 
@@ -372,6 +372,7 @@ fi
  echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
+ echo
  echo "LOG (1)"
  read -r LOG;
 if [[ -z "$LOG" ]]; then
