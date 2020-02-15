@@ -8,7 +8,7 @@
 
 # By Rainman
 # V20201502
-# 1.0.4.5
+# 1.0.4.7
 
 # codes >
 
@@ -91,7 +91,7 @@ clear
 printf '%b' "      $trial_pair $trial \e[0;35mhttps://github.com/steeply/gbot-trader\033[0m
  <------------------------------------------------------------------------------------------->\033[0m
       \e[0;32mGBot (Trading Bot) - Command Center\e[31m
-      \e[0;33m[ GBot, admin helper tool v1.0.4.5 ]\033[0m
+      \e[0;33m[ GBot, admin helper tool v1.0.4.7 ]\033[0m
 
       $cm_uptime
 
@@ -884,6 +884,8 @@ latest_date=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%
 latest_head=$(git rev-parse --short HEAD)
 printf '%b' "[\033[0;31mold\033[0m] (\e[4;32m$latest_head\033[0m) \e[4;32mNew Updates For Gbot\033[0m! - $latest_date"
  echo
+cd "$folder_bot" || exit
+npm i
 else
 latest_date=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
 latest_head=$(git rev-parse --short HEAD)
