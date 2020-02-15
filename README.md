@@ -3,8 +3,6 @@
 GBot, admin helper tool in bash  
 ![alt text](https://i.imgur.com/55yy9NM.png)  
   
-https://github.com/steeply/gbot-trader
-  
 ##### First time install
 ```mkdir /scripts/```  
 ```cd /scripts/```  
@@ -23,7 +21,6 @@ Please edit 'user' and 'group' matching your system inside gbot.txt
   
 If you don't want to create a 'scripts' folder, please edit gbot.txt  
 
-
-
+https://github.com/steeply/gbot-trader  
   
 ---What
