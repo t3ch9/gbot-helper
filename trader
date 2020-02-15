@@ -8,7 +8,7 @@
 
 # By Rainman
 # V20201502
-# 1.0.4.6
+# 1.0.4.5
 
 # codes >
 
@@ -91,7 +91,7 @@ clear
 printf '%b' "      $trial_pair $trial \e[0;35mhttps://github.com/steeply/gbot-trader\033[0m
  <------------------------------------------------------------------------------------------->\033[0m
       \e[0;32mGBot (Trading Bot) - Command Center\e[31m
-      \e[0;33m[ GBot, admin helper tool v1.0.4.6 ]\033[0m
+      \e[0;33m[ GBot, admin helper tool v1.0.4.5 ]\033[0m
 
       $cm_uptime
 
@@ -208,7 +208,7 @@ printf '%b' "One Sell Strategy"
  echo "LANGUAGE (ru,en) etc"
  read -r LNG;
 if [[ -z "$LNG" ]]; then
-printf "default 'ru/russian'"
+printf "default '\e[0;32mru/russian\033[0m'"
  echo
 LNG="ru"
  echo
@@ -218,28 +218,27 @@ fi
  echo "DEPOSIT LIMIT (80)%"
  read -r DLT;
 if [[ -z "$DLT" ]]; then
-echo "default '80%'"
+printf '%b' "default '\e[0;32m80%\033[0m'"
 DLT="80"
  echo
 else
-printf "[\e[0;32mok\033[0m] $DLT"
+printf "[\e[0;32mok\033[0m] $DLT%"
 fi
  echo
  echo "EXCHANGE (Poloniex)"
  read -r EXC;
 if [[ -z "$EXC" ]]; then
-printf "default 'Poloniex'"
- echo
+printf "default '\e[0;32mPoloniex\033[0m'"
 EXC="Poloniex"
  echo
 else
 printf '%b' "[\e[0;32mok\033[0m] $EXC"
 fi
+ echo
  echo "TIME ZONE (Europe/Moscow)"
  read -r TMZ;
 if [[ -z "$TMZ" ]]; then
-printf "default 'Europe/Moscow'"
- echo
+printf "default '\e[0;32mEurope/Moscow\033[0m'"
 TMZ="Europe/Moscow"
  echo
 else
@@ -311,7 +310,7 @@ cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
  echo "LANGUAGE (ru,en) etc"
  read -r LNG;
 if [[ -z "$LNG" ]]; then
-printf "default 'ru/russian'"
+printf "default '\e[0;32mru/russian\033[0m'"
 LNG="ru"
  echo
 else
@@ -321,17 +320,17 @@ fi
  echo "DEPOSIT LIMIT (80)%"
  read -r DLT;
 if [[ -z "$DLT" ]]; then
- echo "default '80%'"
+printf '%b' "default '\e[0;32m80%\033[0m'"
 DLT="80"
  echo
 else
-printf "[\e[0;32mok\033[0m] $DLT"
+printf "[\e[0;32mok\033[0m] $DLT%"
 fi
  echo
  echo "EXCHANGE (Poloniex)"
  read -r EXC;
 if [[ -z "$EXC" ]]; then
-printf "default 'Poloniex'"
+printf "default '\e[0;32mPoloniex\033[0m'"
 EXC="Poloniex"
  echo
 else
@@ -341,7 +340,7 @@ fi
  echo "Main Coin (btc)"
  read -r CO0;
 if [[ -z "$CO0" ]]; then
-printf "default 'btc'"
+printf "default '\e[0;32mbtc\033[0m'"
 CO0="btc"
  echo
 else
@@ -351,7 +350,7 @@ fi
  echo "Coin two (usdt)"
  read -r CO1;
 if [[ -z "$CO1" ]]; then
-printf "default 'usdt'"
+printf "default '\e[0;32musdt\033[0m'"
 CO1="usdt"
  echo
 else
@@ -361,7 +360,7 @@ fi
  echo "TIME ZONE (Europe/Moscow)"
  read -r TMZ;
 if [[ -z "$TMZ" ]]; then
-printf "default 'Europe/Moscow'"
+printf "default '\e[0;32mEurope/Moscow\033[0m'"
 TMZ="Europe/Moscow"
  echo
 else
@@ -682,7 +681,7 @@ cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
  echo "LANGUAGE (ru,en) etc"
  read -r LNG;
 if [[ -z "$LNG" ]]; then
-printf "default 'ru/russian'"
+printf "default '\e[0;32mru/russian\033[0m'"
 LNG="ru"
  echo
 else
@@ -692,17 +691,17 @@ fi
  echo "DEPOSIT LIMIT (80)%"
  read -r DLT;
 if [[ -z "$DLT" ]]; then
- echo "default '80%'"
+printf '%b' "default '\e[0;32m80%\033[0m'"
 DLT="80"
  echo
 else
-printf "[\e[0;32mok\033[0m] $DLT"
+printf "[\e[0;32mok\033[0m] $DLT%"
 fi
  echo
  echo "EXCHANGE (Poloniex)"
  read -r EXC;
 if [[ -z "$EXC" ]]; then
-printf "default 'Poloniex'"
+printf "default '\e[0;32mPoloniex\033[0m'"
 EXC="Poloniex"
  echo
 else
@@ -712,7 +711,7 @@ fi
  echo "Main Coin (btc)"
  read -r CO0;
 if [[ -z "$CO0" ]]; then
-printf "default 'btc'"
+printf "default '\e[0;32mbtc\033[0m'"
 CO0="btc"
  echo
 else
@@ -722,7 +721,7 @@ fi
  echo "Coin two (usdt)"
  read -r CO1;
 if [[ -z "$CO1" ]]; then
-printf "default 'usdt'"
+printf "default '\e[0;32musdt\033[0m'"
 CO1="usdt"
  echo
 else
@@ -732,7 +731,7 @@ fi
  echo "TIME ZONE (Europe/Moscow)"
  read -r TMZ;
 if [[ -z "$TMZ" ]]; then
-printf "default 'Europe/Moscow'"
+printf "default '\e[0;32mEurope/Moscow\033[0m'"
 TMZ="Europe/Moscow"
  echo
 else
