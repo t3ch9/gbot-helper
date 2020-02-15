@@ -1,0 +1,844 @@
+#!/bin/bash
+
+# script >
+
+#############################################################################
+#                          G B O T  -  H E L P E R                          #
+#############################################################################
+
+# By Rainman
+# V20201402
+# 0.8.4.4
+
+# codes >
+
+while :
+do
+clear
+
+# get date
+NOW="$(date +"%m.%d.%Y")"
+
+# config >
+
+# user group >
+user=pi
+group=pi
+
+# folders >
+folder_bot=/scripts/gbot-trader
+folder_helper=/scripts/gbot-helper
+folder_logs=/scripts/gbot-trader/logs
+# install folder >
+folder_install=/scripts/
+
+# log files >
+logs="$folder_bot"/logs/*.log
+
+# dialog, ncurses no utf8 acs >
+export NCURSES_NO_UTF8_ACS=1
+
+# system uptime >
+cm_uptime="\033[0mTime""$W""$(uptime)\033[0m"
+
+# orders >
+orders=$(cat $logs 2> /dev/null | grep -c "Order\s.*.\sid:\s" 2> /dev/null)
+# old orders >
+orders_old=$(cat $folder_logs/old/*.log 2> /dev/null | grep -c "Order\s.*.\sid:\s" 2> /dev/null)
+# reserved >
+reserved=$(cat $logs 2> /dev/null | grep -o "Reserved:*.*" | tail -1 2> /dev/null)
+reserved_dep=$(cat $logs 2> /dev/null | grep -o "reserved-deposit:*.*" | tail -1 2> /dev/null)
+# if deposit limit >
+if
+cat $logs 2> /dev/null | grep -q "0.05\sBTC!" | tail -1 2> /dev/null
+then
+trial="\e[0;33mLimit 0.05 BTC!\033[0m"
+fi
+# if pair limit >
+if
+cat $logs 2> /dev/null | grep -q "trading\spairs\swith\sBTC!" | tail -1 2> /dev/null
+then
+trial_pair="\e[0;33mOnly BTC!\033[0m"
+fi
+# deposit limit >
+deposit_lmt=$(cat $logs 2> /dev/null | grep "deposit-limit:\s" | tail -1 2> /dev/null)
+# last/old balance >
+# old >
+if grep -q "trade-deposit:\s" $folder_logs/old/*.log 2> /dev/null; then
+old_balance=$(cat $folder_logs/old/*.log 2> /dev/null | grep "trade-deposit:\s" | tail -1 2> /dev/null)
+# if nothing, print "Restart trader please.."
+else
+old_balance="\e[0;35mEmpty log?\033[0m - Restart trader please"
+fi
+# new >
+if grep -q "trade-deposit:\s" $logs 2> /dev/null; then
+new_balance=$(cat $logs 2> /dev/null | grep "trade-deposit:\s" | tail -1 2> /dev/null)
+# if nothing, print "Restart trader please.."
+else
+new_balance="\e[0;35mEmpty log?\033[0m - Restart trader please"
+fi
+# gbot - Strategy >
+strategy=$(cat $logs 2> /dev/null | grep "Strategy:*." | tail -1 2> /dev/null)
+# get latest price >
+latest_price=$(cat $logs 2> /dev/null | grep "\sALL\s|\s" | tail -1 2> /dev/null)
+# count "buys" & "sells"
+buy=$(cat $logs 2> /dev/null | grep -c "Average\spurchase\sprice:\s" 2> /dev/null)
+sell=$(cat $logs 2> /dev/null | grep -c "SELL\sexecuted!\s" 2> /dev/null)
+# count old "buys" & "sells" >
+buy_old=$(cat $folder_logs/old/*.log 2> /dev/null | grep -c "Average\spurchase\sprice:\s" 2> /dev/null)
+sell_old=$(cat $folder_logs/old/*.log 2> /dev/null | grep -c "SELL\sexecuted!\s" 2> /dev/null)
+# last "sell" & "buy" price >
+last_buy_price=$(cat $logs 2> /dev/null | grep "Order\sprice:\s" | tail -1 2> /dev/null)
+last_sell_price=$(cat $logs 2> /dev/null | grep "sell\sprice:\s" | tail -1 2> /dev/null)
+# latest profit >
+last_profit=$(cat $logs 2> /dev/null | grep -o "Profit\s*.*" | tail -1 2> /dev/null)
+last_profit_old=$(cat $folder_logs/old/*.log 2> /dev/null | grep -o "Profit\s*.*" | tail -1 2> /dev/null)
+profit_count=$(cat $logs 2> /dev/null | grep -c "Profit\s*.*" 2> /dev/null)
+profit_count_old=$(cat $folder_logs/old/*.log 2> /dev/null | grep -c "Profit\s*.*" 2> /dev/null)
+
+# codes done
+clear
+ echo
+# menu >
+printf '%b' "      $trial_pair $trial \e[0;35mhttps://github.com/steeply/gbot-trader\033[0m
+ <------------------------------------------------------------------------------------------->\033[0m
+      \e[0;32mGBot (Trading Bot) - Command Center\e[31m
+      \e[0;33m[ GBot, admin helper tool v0.8.4.4 ]\033[0m
+
+      $cm_uptime
+      
+      $strategy
+      $reserved
+      $last_profit\033[0m
+      \e[0;32mNew $new_balance\033[0m
+      \e[90mOld $old_balance\033[0m      
+
+      r : \e[0;35mRestart\033[0m  - restart trader       \e[0;32mStatus\033[0m
+      s : \e[0;35mStop\033[0m     - stop trader          Buy\e[0;32m....:\033[0m $buy \e[90m$buy_old\033[0m
+      i : \e[0;35mInstall\033[0m  - config & key         Sell\e[0;32m...:\033[0m $sell \e[90m$sell_old\033[0m
+      l : \e[0;35mLogs\033[0m     - analyze logs         Orders\e[0;32m.:\033[0m $orders \e[90m$orders_old\033[0m
+      u : \e[0;35mUpdate\033[0m   - update scripts       
+      x : \e[0;35mStats\033[0m    - stats                $last_buy_price
+      q : \e[0;35mExit\033[0m     - exit                 $last_sell_price
+
+ $latest_price
+ <------------------------------------------------------------------------------------------->\033[0m
+ "
+ echo
+ read -r -n1 -s
+case "$REPLY" in
+
+# stats >
+
+"x")
+
+printf '%b' "$last_profit
+\e[90m$last_profit_old\033[0m
+
+\e[0;32mProfit count\033[0m: $profit_count \e[90m$profit_count_old\033[0m"
+ echo
+ echo
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# stats done
+
+# restart >
+
+"r")
+
+clear
+# codes >
+logs=("$logs")
+# codes done
+sudo pkill screen
+sudo chown -R "$user":"$group" "$folder_bot"
+mkdir "$folder_logs"/old 2> /dev/null
+mv "$folder_logs"/*.log "$folder_logs"/old 2> /dev/null
+cd "$folder_bot"; screen -dmS crypto101 ./config.sh
+lnav "${logs[@]}"
+
+ ;;
+
+# restart done
+
+# Stop >
+
+"s")
+
+clear
+sudo pkill screen
+sudo chown -R "$user":"$group" "$folder_bot"
+mkdir "$folder_logs"/old 2> /dev/null
+mv "$folder_logs"/*.log "$folder_logs"/old 2> /dev/null
+screen -r
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# Stop done
+
+# Install config >
+
+"i")
+
+HEIGHT=11
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="Install"
+TITLE="config & key"
+MENU="Choose one of the following options:"
+
+OPTIONS=(1 "One Sell Strategy"
+         2 "Create config.sh file"
+         3 "Create gbot-1.key file"
+         4 "Example: config and key")
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+
+# install "one sell" strategy >
+
+"1")
+
+ echo
+printf '%b' "One Sell Strategy"
+ echo
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+ echo "LANGUAGE (ru,en) etc"
+ read -r LNG;
+if [[ -z "$LNG" ]]; then
+printf "default 'ru/russian'"
+ echo
+LNG="ru"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $LNG"
+fi
+ echo "DEPOSIT LIMIT (80)%"
+ read -r DLT;
+if [[ -z "$DLT" ]]; then
+echo "default '80%'"
+DLT="80"
+ echo
+else
+printf "[\e[0;32mok\033[0m] $DLT"
+fi
+ echo "EXCHANGE (Poloniex)"
+ read -r EXC;
+if [[ -z "$EXC" ]]; then
+printf "default 'Poloniex'"
+ echo
+EXC="Poloniex"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $EXC"
+fi
+ echo "TIME ZONE (Europe/Moscow)"
+ read -r TMZ;
+if [[ -z "$TMZ" ]]; then
+printf "default 'Europe/Moscow'"
+ echo
+TMZ="Europe/Moscow"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $TMZ"
+fi
+# backup config and key >
+mkdir "$folder_bot"/backup &> /dev/null
+cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
+
+ echo "#!/bin/sh
+export LANGUAGE=$LNG
+export LOG=1
+export LOG_DEBUG=1
+export LOG_TRANSPORTS=2
+# ==================================================
+export DEPOSIT_LIMIT=$DLT%
+export EXCHANGE=$EXC
+export NAME_COIN=btc
+export NAME_COIN_TWO=usdt
+export COUNT_ORDERS=20
+export OFFSET_FIRST_ORDERS_PERCENT=0.01
+export ONE_ORDERS_OFFSET=0.4
+export ONE_ORDERS_PROFIT_PERCENT=0.3
+export ONE_ORDERS_SELL=true
+export QUANTITY_ORDERS_IN_BLOCKS=5
+export RANGE_OFFSET=15
+export SIZE_ORDERS_MARTINGALE=20
+#  ==================================================
+export TYPE_DATA_USED=history
+export DELAY_REQUEST_API=2000
+export NODE_ENV=production
+export DELAY_BETWEEN_MODULES=2
+export TIME_ZONE=$TMZ
+. ./gbot-1.key
+node ./build/server --no-color" > "$folder_bot"/config.sh.tmp
+ read -r -p "Install new config? (y/n) " -n 1 -r
+ echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+mv "$folder_bot"/config.sh.tmp "$folder_bot"/config.sh
+sudo chmod +x "$folder_bot"/config.sh
+else
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "$folder_bot"/config.sh.tmp created."
+fi
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# install "one sell" strategy done
+
+# edit config.sh >
+
+"2")
+
+ echo
+printf '%b' "Edit config.sh file"
+ echo
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+# backup config and key >
+mkdir "$folder_bot"/backup &> /dev/null
+cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
+
+ echo "LANGUAGE (ru,en) etc"
+ read -r LNG;
+if [[ -z "$LNG" ]]; then
+printf "default 'ru/russian'"
+LNG="ru"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $LNG"
+fi
+ echo
+ echo "DEPOSIT LIMIT (80)%"
+ read -r DLT;
+if [[ -z "$DLT" ]]; then
+ echo "default '80%'"
+DLT="80"
+ echo
+else
+printf "[\e[0;32mok\033[0m] $DLT"
+fi
+ echo "EXCHANGE (Poloniex)"
+ read -r EXC;
+if [[ -z "$EXC" ]]; then
+printf "default 'Poloniex'"
+EXC="Poloniex"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $EXC"
+fi
+ echo
+ echo "Main Coin (btc)"
+ read -r CO0;
+if [[ -z "$CO0" ]]; then
+printf "default 'btc'"
+CO0="btc"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $CO0"
+fi
+ echo
+ echo "Coin two (usdt)"
+ read -r CO1;
+if [[ -z "$CO1" ]]; then
+printf "default 'usdt'"
+CO1="usdt"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $CO1"
+fi
+ echo
+ echo "TIME ZONE (Europe/Moscow)"
+ read -r TMZ;
+if [[ -z "$TMZ" ]]; then
+printf "default 'Europe/Moscow'"
+TMZ="Europe/Moscow"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $TMZ"
+fi
+# create newly edited config.sh >
+ echo
+ echo "#!/bin/sh
+export LANGUAGE=$LNG
+export LOG=1
+export LOG_DEBUG=1
+export LOG_TRANSPORTS=2
+# ==================================================
+export DEPOSIT_LIMIT=$DLT%
+export EXCHANGE=$EXC
+export NAME_COIN=$CO0
+export NAME_COIN_TWO=$CO1
+export COUNT_ORDERS=20
+export OFFSET_FIRST_ORDERS_PERCENT=0.01
+export ONE_ORDERS_OFFSET=0.4
+export ONE_ORDERS_PROFIT_PERCENT=0.3
+export ONE_ORDERS_SELL=true
+export QUANTITY_ORDERS_IN_BLOCKS=5
+export RANGE_OFFSET=15
+export SIZE_ORDERS_MARTINGALE=20
+#  ==================================================
+export TYPE_DATA_USED=history
+export DELAY_REQUEST_API=2000
+export NODE_ENV=production
+export DELAY_BETWEEN_MODULES=2
+export TIME_ZONE=$TMZ
+. ./gbot-1.key
+node ./build/server --no-color" > "$folder_bot"/config.sh.tmp
+ read -r -p "Install new config? (y/n) " -n 1 -r
+ echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+mv "$folder_bot"/config.sh.tmp "$folder_bot"/config.sh
+sudo chmod +x "$folder_bot"/config.sh
+else
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "$folder_bot"/config.sh.tmp created."
+fi
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# edit config.sh done
+
+# edit gbot-1.key file >
+
+"3")
+
+ echo
+printf '%b' "Edit gbot-1.key file"
+ echo
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+# backup config and key >
+mkdir "$folder_bot"/backup &> /dev/null
+cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
+
+ echo "API Key (from your exchange)"
+ read -r KEY;
+if [[ -z "$KEY" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "API Secret (from your exchange)"
+ read -r SKEY;
+if [[ -z "$SKEY" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "Telegram Token (Telegram)"
+ read -r TKN;
+if [[ -z "$TKN" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "Telegram ID (Telegram)"
+ read -r KID;
+if [[ -z "$KID" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "Wallet"
+ read -r WLT;
+if [[ -z "$WLT" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "https://gbot-trader.herokuapp.com/pricing
+
+LICENSE KEY (version)"
+ read -r LKEY;
+if [[ -z "$LKEY" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+# create newly edited gbot-1.key >
+ echo "export KEY=$KEY
+export SECRET=$SKEY
+export TELEGRAM_TOKEN=$TKN
+export TELEGRAM_ID=$KID
+export WALLET=$WLT
+export LICENSE_KEY=$LKEY" > "$folder_bot"/gbot-1.key.tmp
+ read -r -p "Install new gbot-1.key? (y/n) " -n 1 -r
+ echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+mv "$folder_bot"/gbot-1.key.tmp "$folder_bot"/gbot-1.key
+sudo chmod +x "$folder_bot"/config.sh
+else
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "$folder_bot"/gbot-1.key.tmp created."
+fi
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# edit gbot-1.key file done
+
+# example config/key >
+
+"4")
+
+# backup config and key >
+mkdir "$folder_bot"/backup &> /dev/null
+cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
+
+echo "#!/bin/sh
+
+export LOG=1
+export LOG_DEBUG=1
+export LOG_TRANSPORTS=2
+# ==================================================
+export DEPOSIT_LIMIT=80%
+export EXCHANGE=bitfinex
+export NAME_COIN=LTC
+export NAME_COIN_TWO=BTC
+export ONE_ORDERS_SELL=true
+export ONE_ORDERS_PROFIT_PERCENT=1
+export ONE_ORDERS_OFFSET=0.2
+export FIRST_LOADING_HISTORY=0
+export CONTINUE_MARTINGALE_GRID=0
+export OFFSET_ORDERS_EXPONENTIAL=0.2
+export OFFSET_FIRST_ORDERS_PERCENT=0.0000001
+export MARTINGALE_TYPE=1
+export SIZE_ORDERS_MARTINGALE=30
+export COUNT_ORDERS=20
+export QUANTITY_ORDERS_IN_BLOCKS=3
+export SIZE_FIRST_ORDER=0.1
+#  ==================================================
+export TYPE_DATA_USED=history
+export DELAY_REQUEST_API=2000
+export CYCLES_AUTO_EXIT=5
+export NODE_ENV=production
+export DELAY_BETWEEN_MODULES=2
+export TIME_ZONE=Europe/Moscow
+. ./keys/gbot-1.key
+node ./build/server --no-color
+
+#npm start" > "$folder_bot"/config.sh.example
+echo "export KEY=
+export SECRET=
+export TELEGRAM_TOKEN=
+export TELEGRAM_ID=
+export WALLET=
+export LICENSE_KEY=" > "$folder_bot"/gbot-1.key.example
+printf '%b' "[\e[0;32mok\033[0m] "$folder_bot"/config.sh.example created."
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "$folder_bot"/gbot-1.key.example created."
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# example config/key >
+
+esac
+
+ ;;
+
+# Install config done
+
+# check logs >
+
+"l")
+
+# codes >
+
+# log issues >
+log_warnings=$(cat $logs 2> /dev/null | grep -c ".*warn*." 2> /dev/null)
+log_restart=$(cat $logs 2> /dev/null | grep -c ".*restart*." 2> /dev/null)
+log_errors=$(cat $logs 2> /dev/null | grep -c ".*error*." 2> /dev/null)
+log_gateway=$(cat $logs 2> /dev/null | grep -c "502:\sBad\sGateway" 2> /dev/null)
+log_forbidden=$(cat $logs 2> /dev/null | grep -c "Forbidden" 2> /dev/null)
+log_errordata=$(cat $logs 2> /dev/null | grep -c "ErrorData" 2> /dev/null)
+log_errortrader=$(cat $logs 2> /dev/null | grep -c "ErrorTrader" 2> /dev/null)
+
+# codes done
+
+printf '%b' "Logs:
+[\e[0;33mWarning\033[0m]\e[0;32m.....:\033[0m $log_warnings
+[\e[0;33mRestart\033[0m]\e[0;32m.....:\033[0m $log_restart
+[\e[0;31mGateway\033[0m]\e[0;32m.....:\033[0m $log_gateway
+[\e[0;31mForbidden\033[0m]\e[0;32m...:\033[0m $log_forbidden
+[\e[0;31mErrordata\033[0m]\e[0;32m...:\033[0m $log_errordata
+[\e[0;31mErrorTrader\033[0m]\e[0;32m.:\033[0m $log_errortrader
+[\e[0;31mError\033[0m]\e[0;32m.......:\033[0m $log_errors"
+ echo
+ echo
+ read -r -p "lnav config? (l/n) " -n 1 -r
+ echo
+if [[ $REPLY =~ ^[Ll]$ ]]
+then
+# codes >
+logs=("$logs")
+# codes done
+if ! [ -x "$(command -v lnav)" ]; then
+sudo apt install lnav -y &> /dev/null
+fi
+lnav "${logs[@]}"
+fi
+
+ ;;
+
+# check logs done
+
+# update helper >
+
+"u")
+
+HEIGHT=13
+WIDTH=44
+CHOICE_HEIGHT=6
+BACKTITLE="Update"
+TITLE="Install/Update/Upgrade"
+MENU="Choose one of the following options:"
+
+OPTIONS=(1 "Update gbot-trader"
+         2 "Update gbot-helper"
+         3 "Reinstall (delete /gbot-trader)"
+         4 "Reinstall (delete /gbot-helper)"
+         5 "Reset --hard origin/master (trader)"
+         6 "Reset --hard origin/master (helper)")
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+
+# update gbot-trader >
+
+"1")
+
+# check if 'gbot-trader' exist >
+FILE="$folder_bot/readme.md"
+if [ ! -f "$FILE" ];
+then
+# fresh install ? >
+sudo mkdir "$folder_bot" &> /dev/null
+sudo chown -R "${user:?}":"${group:?}" "$folder_bot"
+cd "$folder_bot" || exit
+git clone https://github.com/steeply/gbot-trader.git 2> /dev/null
+else
+# check for updates >
+cd "${folder_bot:?}" || exit
+if git checkout master &> /dev/null &&
+git fetch origin master &> /dev/null &&
+[ "$(git rev-list HEAD...origin/master --count)" != 0 ] &&
+git merge origin/master
+then
+latest_date=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
+latest_head=$(git rev-parse --short HEAD)
+printf '%b' "[\033[0;31mold\033[0m] (\e[4;32m$latest_head\033[0m) \e[4;32mNew Updates For Gbot\033[0m! - $latest_date"
+ echo
+else
+latest_date=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
+latest_head=$(git rev-parse --short HEAD)
+printf '%b' "[\e[0;32mok\033[0m] (\e[4;32m$latest_head\033[0m) Gbot Updated - $latest_date"
+ echo
+fi
+# check if 'gbot-trader' exist done
+fi
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# update gbot-trader done
+
+# update gbot-helper >
+
+"2")
+
+# check if 'gbot-helper' exist >
+FILE="$folder_helper/README.md"
+if [ ! -f "$FILE" ];
+then
+# fresh install ? >
+sudo mkdir "$folder_helper" &> /dev/null
+sudo chown -R "${user:?}":"${group:?}" "$folder_helper"
+cd "$folder_helper" || exit
+git clone https://github.com/steeply/gbot-trader.git 2> /dev/null
+else
+# check for updates >
+cd "${folder_helper:?}" || exit
+if git checkout master &> /dev/null &&
+git fetch origin master &> /dev/null &&
+[ "$(git rev-list HEAD...origin/master --count)" != 0 ] &&
+git merge origin/master
+then
+latest_date=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
+latest_head=$(git rev-parse --short HEAD)
+printf '%b' "[\033[0;31mold\033[0m] (\e[4;32m$latest_head\033[0m) \e[4;32mNew Updates For Helper\033[0m! - $latest_date"
+ echo
+# upgrade helper >
+sudo cp /usr/local/bin/trader /usr/local/bin/trader.old &> /dev/null
+sudo chmod -x /usr/local/bin/trader.old
+sudo chown -R "$user":"$group" "$folder_helper"
+cd "$folder_helper" || exit
+printf "[\e[0;32mok\033[0m] -> Installing new release"
+ sleep 1
+ echo
+sudo cp "$folder_helper"/trader /usr/local/bin &> /dev/null
+sudo chmod +x /usr/local/bin/trader
+ sleep 1
+printf "[\e[0;32mok\033[0m] -> Installed."
+ echo
+ echo
+ sleep 1 && exit
+# upgrade helper done
+else
+latest_date=$(git log -1 --format="%at" | xargs -I{} date -d @{} '+%Y/%m/%d %H:%M:%S')
+latest_head=$(git rev-parse --short HEAD)
+printf '%b' "[\e[0;32mok\033[0m] (\e[4;32m$latest_head\033[0m) Helper Updated - $latest_date"
+ echo
+fi
+# check if 'gbot-trader' exist done
+fi
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# update gbot-helper done
+
+# reinstall gbot-trader >
+
+"3")
+
+sudo mkdir "$folder_install" &> /dev/null
+sudo chown -R "$user":"$group" "$folder_install"
+cp "$folder_bot"/*.sh *.key "$folder_install" &> /dev/null
+cp "$folder_bot"/backup "$folder_install" &> /dev/null
+sudo rm -r "$folder_bot" &> /dev/null
+cd "$folder_install" || exit
+git clone https://github.com/steeply/gbot-trader.git
+mv "$folder_install"/backup "$folder_bot" &> /dev/null
+sudo chown -R "$user":"$group" "$folder_install"
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# reinstall gbot-trader done
+
+# reinstall gbot-helper >
+
+"4")
+
+sudo mkdir "$folder_install" &> /dev/null
+sudo chown -R "$user":"$group" "$folder_install"
+sudo rm -r "$folder_helper" &> /dev/null
+cd "$folder_install" || exit
+git clone https://github.com/Daedalus-code/gbot-helper.git
+sudo chown -R "$user":"$group" "$folder_install"
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# reinstall gbot-helper done
+
+# reset gbot-trader >
+
+"5")
+
+ echo
+printf '%b' "Reset --hard origin/master (trader)"
+cd "$folder_bot" || exit
+git reset --hard origin/master
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# reset gbot-trader done
+
+# reset gbot-helper >
+
+"6")
+
+ echo
+printf '%b' "Reset --hard origin/master (helper)"
+cd "$folder_helper" || exit
+git reset --hard origin/master
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+ ;;
+
+# reset gbot-helper done
+
+esac
+
+ ;;
+
+"q")  exit                    ;;
+"Q")  echo "case sensitive!!" ;;
+"*")  echo "empty" ;;
+esac
+done
+
+# update helper done
+
+# b9ea65cd1e2b40cfcbf777559ef0c9ca
+
+# script done
