@@ -8,7 +8,7 @@ https://github.com/steeply/gbot-trader
 ##### First time install
 ```mkdir /scripts/```  
 ```cd /scripts/```  
-```git pull https://github.com/Daedalus-code/gbot-helper.git```  
+```git clone https://github.com/Daedalus-code/gbot-helper.git```  
 ```cp /scripts/gbot-helper/trader /usr/local/bin```  
 ```sudo chmod +x /usr/local/bin/trader```  
   
