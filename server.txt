@@ -1,0 +1,28 @@
+##############
+# user group #
+##############
+
+user=pi
+group=pi
+
+###########
+# folders #
+###########
+
+folder_bot=/scripts/gbot-trader
+folder_helper=/scripts/gbot-helper
+folder_logs=/scripts/gbot-trader/logs
+
+##################
+# install folder #
+##################
+
+folder_install=/scripts/
+
+#############
+# log files #
+#############
+
+logs="$folder_bot"/logs/*.log
+
+# END
