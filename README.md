@@ -9,7 +9,7 @@ https://github.com/steeply/gbot-trader
 ```mkdir /scripts/```  
 ```cd /scripts/```  
 ```git clone https://github.com/Daedalus-code/gbot-helper.git```  
-```cp /scripts/gbot-helper/trader /usr/local/bin```  
+```sudo cp /scripts/gbot-helper/trader /usr/local/bin```  
 ```sudo chmod +x /usr/local/bin/trader```  
   
 Please edit 'user' and 'group' matching your system. line: 25, 26  
