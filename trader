@@ -8,7 +8,7 @@
 
 # By Rainman
 # V20201502
-# 0.8.4.0
+# 1.0.4.3
 
 # codes >
 
@@ -91,7 +91,7 @@ clear
 printf '%b' "      $trial_pair $trial \e[0;35mhttps://github.com/steeply/gbot-trader\033[0m
  <------------------------------------------------------------------------------------------->\033[0m
       \e[0;32mGBot (Trading Bot) - Command Center\e[31m
-      \e[0;33m[ GBot, admin helper tool v0.8.4.0 ]\033[0m
+      \e[0;33m[ GBot, admin helper tool v1.0.4.3 ]\033[0m
 
       $cm_uptime
 
@@ -667,6 +667,209 @@ cd "$folder_install" || exit
 git clone https://github.com/steeply/gbot-trader.git 2> /dev/null
 cd "$folder_bot" || exit
 npm i
+# create/edit config.sh >
+ echo
+printf '%b' "Edit config.sh file"
+ echo
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+# backup config and key >
+mkdir "$folder_bot"/backup &> /dev/null
+cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
+
+ echo "LANGUAGE (ru,en) etc"
+ read -r LNG;
+if [[ -z "$LNG" ]]; then
+printf "default 'ru/russian'"
+LNG="ru"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $LNG"
+fi
+ echo
+ echo "DEPOSIT LIMIT (80)%"
+ read -r DLT;
+if [[ -z "$DLT" ]]; then
+ echo "default '80%'"
+DLT="80"
+ echo
+else
+printf "[\e[0;32mok\033[0m] $DLT"
+fi
+ echo "EXCHANGE (Poloniex)"
+ read -r EXC;
+if [[ -z "$EXC" ]]; then
+printf "default 'Poloniex'"
+EXC="Poloniex"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $EXC"
+fi
+ echo
+ echo "Main Coin (btc)"
+ read -r CO0;
+if [[ -z "$CO0" ]]; then
+printf "default 'btc'"
+CO0="btc"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $CO0"
+fi
+ echo
+ echo "Coin two (usdt)"
+ read -r CO1;
+if [[ -z "$CO1" ]]; then
+printf "default 'usdt'"
+CO1="usdt"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $CO1"
+fi
+ echo
+ echo "TIME ZONE (Europe/Moscow)"
+ read -r TMZ;
+if [[ -z "$TMZ" ]]; then
+printf "default 'Europe/Moscow'"
+TMZ="Europe/Moscow"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m] $TMZ"
+fi
+# create newly edited config.sh >
+ echo
+ echo "#!/bin/sh
+export LANGUAGE=$LNG
+export LOG=1
+export LOG_DEBUG=1
+export LOG_TRANSPORTS=2
+# ==================================================
+export DEPOSIT_LIMIT=$DLT%
+export EXCHANGE=$EXC
+export NAME_COIN=$CO0
+export NAME_COIN_TWO=$CO1
+export COUNT_ORDERS=20
+export OFFSET_FIRST_ORDERS_PERCENT=0.01
+export ONE_ORDERS_OFFSET=0.4
+export ONE_ORDERS_PROFIT_PERCENT=0.3
+export ONE_ORDERS_SELL=true
+export QUANTITY_ORDERS_IN_BLOCKS=5
+export RANGE_OFFSET=15
+export SIZE_ORDERS_MARTINGALE=20
+#  ==================================================
+export TYPE_DATA_USED=history
+export DELAY_REQUEST_API=2000
+export NODE_ENV=production
+export DELAY_BETWEEN_MODULES=2
+export TIME_ZONE=$TMZ
+. ./gbot-1.key
+node ./build/server --no-color" > "$folder_bot"/config.sh.tmp
+ read -r -p "Install new config? (y/n) " -n 1 -r
+ echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+mv "$folder_bot"/config.sh.tmp "$folder_bot"/config.sh
+sudo chmod +x "$folder_bot"/config.sh
+else
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "$folder_bot"/config.sh.tmp created."
+fi
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+# create/edit config.sh done
+
+# create/edit gbot-1.key file >
+
+ echo
+printf '%b' "Edit gbot-1.key file"
+ echo
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+
+# backup config and key >
+mkdir "$folder_bot"/backup &> /dev/null
+cp "$folder_bot"/*.sh *.key "$folder_bot"/backup &> /dev/null
+
+ echo "API Key (from your exchange)"
+ read -r KEY;
+if [[ -z "$KEY" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "API Secret (from your exchange)"
+ read -r SKEY;
+if [[ -z "$SKEY" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "Telegram Token (Telegram)"
+ read -r TKN;
+if [[ -z "$TKN" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "Telegram ID (Telegram)"
+ read -r KID;
+if [[ -z "$KID" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "Wallet"
+ read -r WLT;
+if [[ -z "$WLT" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+ echo "https://gbot-trader.herokuapp.com/pricing
+
+LICENSE KEY (version)"
+ read -r LKEY;
+if [[ -z "$LKEY" ]]; then
+printf "empty"
+ echo
+else
+printf '%b' "[\e[0;32mok\033[0m]"
+fi
+ echo
+# create newly edited gbot-1.key >
+ echo "export KEY=$KEY
+export SECRET=$SKEY
+export TELEGRAM_TOKEN=$TKN
+export TELEGRAM_ID=$KID
+export WALLET=$WLT
+export LICENSE_KEY=$LKEY" > "$folder_bot"/gbot-1.key.tmp
+ read -r -p "Install new gbot-1.key? (y/n) " -n 1 -r
+ echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+mv "$folder_bot"/gbot-1.key.tmp "$folder_bot"/gbot-1.key
+sudo chmod +x "$folder_bot"/config.sh
+else
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "$folder_bot"/gbot-1.key.tmp created."
+fi
+ echo
+printf '%b' "[\e[0;32mok\033[0m] "
+ read -r -p "Press Enter to continue" </dev/tty
+ echo
+# edit gbot-1.key file done
 else
 # check for updates >
 cd "${folder_bot:?}" || exit
