@@ -11,5 +11,6 @@ https://github.com/steeply/gbot-trader
 ```git pull https://github.com/Daedalus-code/gbot-helper.git```  
 ```cp /scripts/gbot-helper/trader /usr/local/bin```  
 ```sudo chmod +x /usr/local/bin/trader```  
-
-If you don't want to create a 'scripts' folder, please edit lines: 28-36
+  
+Please edit 'user' and 'group' matching your system. line: 25, 26  
+If you don't want to create a 'scripts' folder, please edit line: 29, 30, 31 and 33  
