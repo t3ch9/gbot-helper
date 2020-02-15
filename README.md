@@ -12,5 +12,5 @@ https://github.com/steeply/gbot-trader
 ```sudo cp /scripts/gbot-helper/trader /usr/local/bin```  
 ```sudo chmod +x /usr/local/bin/trader```  
   
-Please edit 'user' and 'group' matching your system. line: 25, 26  
-If you don't want to create a 'scripts' folder, please edit line: 29, 30, 31 and 33  
+Please edit 'user' and 'group' matching your system inside server.txt  
+If you don't want to create a 'scripts' folder, please edit server.txt
